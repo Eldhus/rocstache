@@ -1,0 +1,15 @@
+name = "Rocstache"
+grammar = "rocstache"
+path_suffixes = ["rocstache"]
+line_comments = []
+block_comment = ["{{! ", " }}"]
+autoclose_before = ";:.,=}])>"
+brackets = [
+    { start = "{", end = "}", close = true, newline = false },
+    { start = "<", end = ">", close = false, newline = false },
+    { start = "(", end = ")", close = true, newline = false },
+    { start = "[", end = "]", close = true, newline = false },
+    { start = "\"", end = "\"", close = true, newline = false, not_in = ["string", "comment"] },
+]
+word_characters = ["_"]
+tab_size = 2

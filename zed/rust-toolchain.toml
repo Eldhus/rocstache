@@ -1,0 +1,5 @@
+# The platform pins its own Rust version (../rust-toolchain.toml); the
+# extension builds with whatever stable has the wasm32-wasip1 target.
+[toolchain]
+channel = "stable"
+targets = ["wasm32-wasip1"]

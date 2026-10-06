@@ -1,0 +1,96 @@
+==================
+variable with formatters
+==================
+<h1>{{ title | upper | truncate 60 "..." other.path }}</h1>
+---
+(template
+  (content)
+  (tag
+    (expression
+      (path (identifier))
+      (formatter (formatter_name))
+      (formatter (formatter_name) (argument (number)) (argument (string)) (argument (path (identifier) (identifier))))))
+  (content))
+
+==================
+sections, partials, comments, raw
+==================
+{{! a comment }}
+{{# items }}<li>{{ name }}</li>{{/ items }}
+{{^ items }}none{{/ items }}
+{{> Nav }}
+{{{ html }}} {{& html }} {{ . }}
+---
+(template
+  (comment (comment_open) (comment_text))
+  (section_open (section_open_delim) (path (identifier)))
+  (content)
+  (tag (expression (path (identifier))))
+  (content)
+  (section_close (section_close_delim) (path (identifier)))
+  (inverted_open (inverted_open_delim) (path (identifier)))
+  (content)
+  (section_close (section_close_delim) (path (identifier)))
+  (partial (partial_delim) (partial_name))
+  (raw_tag (expression (path (identifier))))
+  (raw_tag (raw_delim) (expression (path (identifier))))
+  (tag (expression (path (this)))))
+
+==================
+sigils with inner whitespace and single braces in text
+==================
+a { b } {{ #x }}{{ /x }}
+---
+(template
+  (content)
+  (section_open (section_open_delim) (path (identifier)))
+  (section_close (section_close_delim) (path (identifier))))
+
+==================
+Conditional sections, parent and root paths
+==================
+{{?paid}}{{ ../x }} {{ a | f @now }}{{/paid}}
+---
+
+(template
+  (conditional_open
+    (conditional_open_delim)
+    (path
+      (identifier)))
+  (tag
+    (expression
+      (path
+        (parent)
+        (identifier))))
+  (tag
+    (expression
+      (path
+        (identifier))
+      (formatter
+        (formatter_name)
+        (argument
+          (path
+            (root)
+            (identifier))))))
+  (section_close
+    (section_close_delim)
+    (path
+      (identifier))))
+
+==================
+the leading Roc block and qualified formatters
+==================
+{{%
+import pf.Rocstache exposing [plural]
+
+Ctx(others) : { links : List({ n : I64 }), ..others }
+pct = |n| "${(n * 100).to_str()}%"
+%}}
+<p>{{ n | plural "a" "b" }} {{ tags | List.len }}</p>
+---
+(template
+  (pragma (roc_code))
+  (content)
+  (tag (expression (path (identifier)) (formatter (formatter_name) (argument (string)) (argument (string)))))
+  (tag (expression (path (identifier)) (formatter (formatter_name))))
+  (content))

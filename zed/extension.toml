@@ -1,0 +1,30 @@
+id = "rocstache"
+name = "Rocstache"
+version = "0.1.0"
+schema_version = 1
+description = "rocstache templates: HTML with typed Mustache tags, for Roc apps on roux"
+repository = "https://github.com/Eldhus/rocstache"
+authors = ["y2k <y2k@y2kbugger.com>"]
+
+[grammars.rocstache]
+# The grammar is this repository's root. During development Zed loads it
+# from the local checkout; a published extension needs the public URL
+# (https://github.com/Eldhus/rocstache). `rev` is any commit holding the
+# grammar wanted: `git rev-parse HEAD` after a grammar change.
+repository = "https://github.com/Eldhus/rocstache"
+rev = "44311bd1c594e3d1d78af7b6ede9da90925065d9"
+
+# Template-level diagnostics, hovers (inferred context types, formatter
+# signatures) and completions from the generator: `rocstache-gen lsp`.
+[language_servers.rocstache-gen]
+name = "rocstache-gen"
+languages = ["Rocstache"]
+
+# HTML completions/hovers for the markup, delegated to the same server the
+# HTML extension uses. It sees the {{ }} tags as text.
+[language_servers.vscode-html-language-server]
+name = "vscode-html-language-server"
+languages = ["Rocstache"]
+
+[language_servers.vscode-html-language-server.language_ids]
+"Rocstache" = "html"

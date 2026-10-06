@@ -12,7 +12,7 @@ authors = ["y2k <y2k@y2kbugger.com>"]
 # (https://github.com/Eldhus/rocstache). `rev` is any commit holding the
 # grammar wanted: `git rev-parse HEAD` after a grammar change.
 repository = "https://github.com/Eldhus/rocstache"
-rev = "44311bd1c594e3d1d78af7b6ede9da90925065d9"
+rev = "08b510b4e3d9992db2be95250e1ece18bafd7078"
 
 # Template-level diagnostics, hovers (inferred context types, formatter
 # signatures) and completions from the generator: `rocstache-gen lsp`.

@@ -14,10 +14,9 @@ authors = ["y2k <y2k@y2kbugger.com>"]
 repository = "https://github.com/Eldhus/rocstache"
 rev = "08b510b4e3d9992db2be95250e1ece18bafd7078"
 
-# Template-level diagnostics, hovers (inferred context types, formatter
-# signatures) and completions from the generator: `rocstache-gen lsp`.
-[language_servers.rocstache-gen]
-name = "rocstache-gen"
+# What `roux build` would report in a template, as it is typed: `roux lsp`.
+[language_servers.roux]
+name = "roux"
 languages = ["Rocstache"]
 
 # HTML completions/hovers for the markup, delegated to the same server the

@@ -1,10 +1,9 @@
 //! Zed extension for rocstache templates.
 //!
 //! Two language servers are registered for the "Rocstache" language:
-//!   - `rocstache-gen lsp`: diagnostics, hovers and completions for the
-//!     template language, from the generator's own parser and type
-//!     inference. Found on PATH, or set `lsp.rocstache-gen.binary.path` in
-//!     Zed settings.
+//!   - `roux lsp`: what `roux build` would report in a template, as it is
+//!     typed, from roux's own parser and contract checker. Found on PATH,
+//!     or set `lsp.roux.binary.path` in Zed settings.
 //!   - `vscode-html-language-server`: HTML support for the markup between
 //!     tags (installed through npm into the extension's work directory,
 //!     the same way Zed's HTML extension does).
@@ -13,7 +12,7 @@ use std::{env, fs};
 use zed::settings::LspSettings;
 use zed_extension_api::{self as zed, LanguageServerId, Result, serde_json::json};
 
-const GEN_BINARY: &str = "rocstache-gen";
+const ROUX_BINARY: &str = "roux";
 const HTML_BINARY: &str = "vscode-html-language-server";
 const HTML_PACKAGE: &str = "@zed-industries/vscode-langservers-extracted";
 /// Pinned: nothing floats. Update by hand.
@@ -26,18 +25,18 @@ struct RocstacheExtension {
 }
 
 impl RocstacheExtension {
-    fn gen_command(&self, id: &LanguageServerId, worktree: &zed::Worktree) -> Result<zed::Command> {
+    fn roux_command(&self, id: &LanguageServerId, worktree: &zed::Worktree) -> Result<zed::Command> {
         let settings = LspSettings::for_worktree(id.as_ref(), worktree).ok();
         let configured = settings
             .as_ref()
             .and_then(|s| s.binary.as_ref())
             .and_then(|b| b.path.clone());
-        let path = match configured.or_else(|| worktree.which(GEN_BINARY)) {
+        let path = match configured.or_else(|| worktree.which(ROUX_BINARY)) {
             Some(p) => p,
             None => {
                 return Err(format!(
-                    "{GEN_BINARY} not found. Build it (cd rocstache/gen && zig build -Doptimize=ReleaseFast), \
-                     put it on PATH, or set lsp.rocstache-gen.binary.path in Zed settings."
+                    "{ROUX_BINARY} not found. Build it (in roux: zig build tools, then zig-out/bin/roux), \
+                     put it on PATH, or set lsp.roux.binary.path in Zed settings."
                 ))
             }
         };
@@ -89,7 +88,7 @@ impl zed::Extension for RocstacheExtension {
 
     fn language_server_command(&mut self, id: &LanguageServerId, worktree: &zed::Worktree) -> Result<zed::Command> {
         match id.as_ref() {
-            "rocstache-gen" => self.gen_command(id, worktree),
+            "roux" => self.roux_command(id, worktree),
             "vscode-html-language-server" => self.html_command(id, worktree),
             other => Err(format!("unknown language server {other}")),
         }

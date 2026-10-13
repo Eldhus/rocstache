@@ -16,7 +16,7 @@
 (this) @variable.special
 (parent) @variable.special
 
-; Section names get the same treatment as paths
+; A section's name is a variable, even its last segment
 (section_open (path (identifier) @variable))
 (inverted_open (path (identifier) @variable))
 (conditional_open (path (identifier) @variable))

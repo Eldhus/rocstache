@@ -2,10 +2,8 @@
 [
   "{{" "}}" "{{{" "}}}" "{{%" "%}}"
   (section_open_delim) (inverted_open_delim) (conditional_open_delim) (section_close_delim)
-  (partial_delim) (raw_delim)
+  (partial_delim)
 ] @punctuation.special
-
-(set_delimiter) @keyword
 
 ; Comments
 (comment) @comment
@@ -16,7 +14,6 @@
 (path (identifier) @variable)
 (path (identifier) @property . )
 (this) @variable.special
-(root) @variable.special
 (parent) @variable.special
 
 ; Section names get the same treatment as paths
@@ -28,8 +25,7 @@
 ; Partials are Roc modules
 (partial_name) @type
 
-; Formatter pipes: `| name args`
+; Formatter pipes: `| name "arg"`
 "|" @operator
 (formatter_name) @function
 (string) @string
-(number) @number

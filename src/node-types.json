@@ -1,28 +1,5 @@
 [
   {
-    "type": "argument",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "number",
-          "named": true
-        },
-        {
-          "type": "path",
-          "named": true
-        },
-        {
-          "type": "string",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "comment",
     "named": true,
     "fields": {},
@@ -99,7 +76,7 @@
       "required": false,
       "types": [
         {
-          "type": "argument",
+          "type": "string",
           "named": true
         }
       ]
@@ -139,6 +116,10 @@
         {
           "type": "partial_name",
           "named": true
+        },
+        {
+          "type": "path",
+          "named": true
         }
       ]
     }
@@ -157,10 +138,6 @@
         },
         {
           "type": "parent",
-          "named": true
-        },
-        {
-          "type": "root",
           "named": true
         },
         {
@@ -190,15 +167,11 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "types": [
         {
           "type": "expression",
-          "named": true
-        },
-        {
-          "type": "raw_delim",
           "named": true
         }
       ]
@@ -303,10 +276,6 @@
           "named": true
         },
         {
-          "type": "set_delimiter",
-          "named": true
-        },
-        {
           "type": "tag",
           "named": true
         }
@@ -350,10 +319,6 @@
     "named": true
   },
   {
-    "type": "number",
-    "named": true
-  },
-  {
     "type": "parent",
     "named": true
   },
@@ -366,15 +331,7 @@
     "named": true
   },
   {
-    "type": "raw_delim",
-    "named": true
-  },
-  {
     "type": "roc_code",
-    "named": true
-  },
-  {
-    "type": "root",
     "named": true
   },
   {
@@ -383,10 +340,6 @@
   },
   {
     "type": "section_open_delim",
-    "named": true
-  },
-  {
-    "type": "set_delimiter",
     "named": true
   },
   {

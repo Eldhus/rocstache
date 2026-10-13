@@ -1,15 +1,22 @@
 ==================
-variable with formatters
+values through formatters
 ==================
-<h1>{{ title | upper | truncate 60 "..." other.path }}</h1>
+<h1>{{ title | upper }}</h1><p>{{ dishes | len | plural "dish" "dishes" }} {{ user.firstName }} {{ _x }}</p>
 ---
 (template
   (content)
   (tag
     (expression
       (path (identifier))
+      (formatter (formatter_name))))
+  (content)
+  (tag
+    (expression
+      (path (identifier))
       (formatter (formatter_name))
-      (formatter (formatter_name) (argument (number)) (argument (string)) (argument (path (identifier) (identifier))))))
+      (formatter (formatter_name) (string) (string))))
+  (tag (expression (path (identifier) (identifier))))
+  (tag (expression (path (identifier))))
   (content))
 
 ==================
@@ -19,7 +26,8 @@ sections, partials, comments, raw
 {{# items }}<li>{{ name }}</li>{{/ items }}
 {{^ items }}none{{/ items }}
 {{> Nav }}
-{{{ html }}} {{& html }} {{ . }}
+{{> Top frame }}
+{{{ html }}} {{ . }}
 ---
 (template
   (comment (comment_open) (comment_text))
@@ -32,8 +40,8 @@ sections, partials, comments, raw
   (content)
   (section_close (section_close_delim) (path (identifier)))
   (partial (partial_delim) (partial_name))
+  (partial (partial_delim) (partial_name) (path (identifier)))
   (raw_tag (expression (path (identifier))))
-  (raw_tag (raw_delim) (expression (path (identifier))))
   (tag (expression (path (this)))))
 
 ==================
@@ -47,50 +55,31 @@ a { b } {{ #x }}{{ /x }}
   (section_close (section_close_delim) (path (identifier))))
 
 ==================
-Conditional sections, parent and root paths
+conditional sections and parent paths
 ==================
-{{?paid}}{{ ../x }} {{ a | f @now }}{{/paid}}
+{{?paid}}{{ ../x }} {{ ../../. }}{{/paid}}
 ---
-
 (template
-  (conditional_open
-    (conditional_open_delim)
-    (path
-      (identifier)))
-  (tag
-    (expression
-      (path
-        (parent)
-        (identifier))))
-  (tag
-    (expression
-      (path
-        (identifier))
-      (formatter
-        (formatter_name)
-        (argument
-          (path
-            (root)
-            (identifier))))))
-  (section_close
-    (section_close_delim)
-    (path
-      (identifier))))
+  (conditional_open (conditional_open_delim) (path (identifier)))
+  (tag (expression (path (parent) (identifier))))
+  (tag (expression (path (parent) (parent) (this))))
+  (section_close (section_close_delim) (path (identifier))))
 
 ==================
-the leading Roc block and qualified formatters
+the leading contract block
 ==================
 {{%
-import pf.Rocstache exposing [plural]
-
-Ctx(others) : { links : List({ n : I64 }), ..others }
-pct = |n| "${(n * 100).to_str()}%"
+# The page.
+Ctx : { links : List({ n : I64 }), title : Str }
 %}}
-<p>{{ n | plural "a" "b" }} {{ tags | List.len }}</p>
+<p>{{ links | len | plural "a link" "links" }}</p>
 ---
 (template
   (pragma (roc_code))
   (content)
-  (tag (expression (path (identifier)) (formatter (formatter_name) (argument (string)) (argument (string)))))
-  (tag (expression (path (identifier)) (formatter (formatter_name))))
+  (tag
+    (expression
+      (path (identifier))
+      (formatter (formatter_name))
+      (formatter (formatter_name) (string) (string))))
   (content))

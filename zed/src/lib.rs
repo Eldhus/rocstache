@@ -17,7 +17,7 @@ use zed_extension_api::{self as zed, LanguageServerId, Result, serde_json::json}
 
 const ROUX_BINARY: &str = "roux";
 const HTML_PACKAGE: &str = "@zed-industries/vscode-langservers-extracted";
-/// Pinned: nothing floats. Update by hand.
+/// Pinned: nothing floats. Updated by hand.
 const HTML_VERSION: &str = "4.10.8";
 const HTML_SERVER_PATH: &str =
     "node_modules/@zed-industries/vscode-langservers-extracted/bin/vscode-html-language-server";
@@ -31,7 +31,7 @@ impl RocstacheExtension {
         let path = worktree.which(ROUX_BINARY).ok_or_else(|| {
             format!(
                 "{ROUX_BINARY} not found. Build it (in roux: zig build tools, then zig-out/bin/roux), \
-                 put it on PATH, or set lsp.roux.binary.path in Zed settings."
+                 put it on PATH, or set lsp.roux.binary in Zed settings, its path and \"arguments\": [\"lsp\"]."
             )
         })?;
         Ok(zed::Command { command: path, args: vec!["lsp".into()], env: Default::default() })

@@ -7,15 +7,15 @@
 //!     this command entirely, arguments included: it then needs
 //!     `"arguments": ["lsp"]`.
 //!   - `vscode-html-language-server`: HTML support for the markup between
-//!     tags (installed through npm into the extension's work directory,
-//!     the same way Zed's HTML extension does).
+//!     tags, installed through npm into the extension's work directory at
+//!     HTML_VERSION (Zed's HTML extension would take one on PATH first;
+//!     this one does not, so the version is always the pinned one).
 
 use std::{env, fs};
 use zed::settings::LspSettings;
 use zed_extension_api::{self as zed, LanguageServerId, Result, serde_json::json};
 
 const ROUX_BINARY: &str = "roux";
-const HTML_BINARY: &str = "vscode-html-language-server";
 const HTML_PACKAGE: &str = "@zed-industries/vscode-langservers-extracted";
 /// Pinned: nothing floats. Update by hand.
 const HTML_VERSION: &str = "4.10.8";
@@ -41,10 +41,7 @@ impl RocstacheExtension {
         fs::metadata(HTML_SERVER_PATH).is_ok_and(|stat| stat.is_file())
     }
 
-    fn html_command(&mut self, id: &LanguageServerId, worktree: &zed::Worktree) -> Result<zed::Command> {
-        if let Some(path) = worktree.which(HTML_BINARY) {
-            return Ok(zed::Command { command: path, args: vec!["--stdio".into()], env: Default::default() });
-        }
+    fn html_command(&mut self, id: &LanguageServerId) -> Result<zed::Command> {
         if !(self.html_server_installed && Self::html_server_exists()) {
             zed::set_language_server_installation_status(id, &zed::LanguageServerInstallationStatus::CheckingForUpdate);
             let version = HTML_VERSION.to_string();
@@ -75,7 +72,7 @@ impl zed::Extension for RocstacheExtension {
     fn language_server_command(&mut self, id: &LanguageServerId, worktree: &zed::Worktree) -> Result<zed::Command> {
         match id.as_ref() {
             "roux" => Self::roux_command(worktree),
-            "vscode-html-language-server" => self.html_command(id, worktree),
+            "vscode-html-language-server" => self.html_command(id),
             other => Err(format!("unknown language server {other}")),
         }
     }

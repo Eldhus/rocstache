@@ -2,8 +2,10 @@
 //!
 //! Two language servers are registered for the "Rocstache" language:
 //!   - `roux lsp`: what `roux build` would report in a template, as it is
-//!     typed, from roux's own parser and contract checker. Found on PATH,
-//!     or set `lsp.roux.binary.path` in Zed settings.
+//!     typed, from roux's own parser and contract checker. Found on PATH.
+//!     Zed's own `lsp.roux.binary` setting, when it has a `path`, replaces
+//!     this command entirely, arguments included: it then needs
+//!     `"arguments": ["lsp"]`.
 //!   - `vscode-html-language-server`: HTML support for the markup between
 //!     tags (installed through npm into the extension's work directory,
 //!     the same way Zed's HTML extension does).
@@ -25,30 +27,14 @@ struct RocstacheExtension {
 }
 
 impl RocstacheExtension {
-    fn roux_command(&self, id: &LanguageServerId, worktree: &zed::Worktree) -> Result<zed::Command> {
-        let settings = LspSettings::for_worktree(id.as_ref(), worktree).ok();
-        let configured = settings
-            .as_ref()
-            .and_then(|s| s.binary.as_ref())
-            .and_then(|b| b.path.clone());
-        let path = match configured.or_else(|| worktree.which(ROUX_BINARY)) {
-            Some(p) => p,
-            None => {
-                return Err(format!(
-                    "{ROUX_BINARY} not found. Build it (in roux: zig build tools, then zig-out/bin/roux), \
-                     put it on PATH, or set lsp.roux.binary.path in Zed settings."
-                ))
-            }
-        };
-        let mut args = settings
-            .as_ref()
-            .and_then(|s| s.binary.as_ref())
-            .and_then(|b| b.arguments.clone())
-            .unwrap_or_default();
-        if args.is_empty() {
-            args.push("lsp".to_string());
-        }
-        Ok(zed::Command { command: path, args, env: Default::default() })
+    fn roux_command(worktree: &zed::Worktree) -> Result<zed::Command> {
+        let path = worktree.which(ROUX_BINARY).ok_or_else(|| {
+            format!(
+                "{ROUX_BINARY} not found. Build it (in roux: zig build tools, then zig-out/bin/roux), \
+                 put it on PATH, or set lsp.roux.binary.path in Zed settings."
+            )
+        })?;
+        Ok(zed::Command { command: path, args: vec!["lsp".into()], env: Default::default() })
     }
 
     fn html_server_exists() -> bool {
@@ -88,7 +74,7 @@ impl zed::Extension for RocstacheExtension {
 
     fn language_server_command(&mut self, id: &LanguageServerId, worktree: &zed::Worktree) -> Result<zed::Command> {
         match id.as_ref() {
-            "roux" => self.roux_command(id, worktree),
+            "roux" => Self::roux_command(worktree),
             "vscode-html-language-server" => self.html_command(id, worktree),
             other => Err(format!("unknown language server {other}")),
         }
@@ -100,7 +86,7 @@ impl zed::Extension for RocstacheExtension {
         _worktree: &zed::Worktree,
     ) -> Result<Option<zed::serde_json::Value>> {
         Ok(match id.as_ref() {
-            // Formatting would mangle the template tags; leave it to the generator's whitespace rules.
+            // The HTML server's formatter would mangle the template tags.
             "vscode-html-language-server" => Some(json!({ "provideFormatter": false })),
             _ => None,
         })

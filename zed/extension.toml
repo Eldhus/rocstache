@@ -12,7 +12,7 @@ authors = ["y2k <y2k@y2kbugger.com>"]
 # (https://github.com/Eldhus/rocstache). `rev` is any commit holding the
 # grammar wanted: `git rev-parse HEAD` after a grammar change.
 repository = "https://github.com/Eldhus/rocstache"
-rev = "08b510b4e3d9992db2be95250e1ece18bafd7078"
+rev = "19608fbda5aeb5d98c5bb72e93c8b02f26693606"
 
 # What `roux build` would report in a template, as it is typed: `roux lsp`.
 [language_servers.roux]

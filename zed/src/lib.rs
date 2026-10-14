@@ -17,7 +17,7 @@ use zed_extension_api::{self as zed, LanguageServerId, Result, serde_json::json}
 
 const ROUX_BINARY: &str = "roux";
 const HTML_PACKAGE: &str = "@zed-industries/vscode-langservers-extracted";
-/// Pinned: nothing floats. Updated by hand, with the README's other pins.
+/// Pinned: nothing floats. Updated by hand.
 const HTML_VERSION: &str = "4.10.8";
 const HTML_SERVER_PATH: &str =
     "node_modules/@zed-industries/vscode-langservers-extracted/bin/vscode-html-language-server";

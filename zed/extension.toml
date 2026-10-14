@@ -7,8 +7,8 @@ repository = "https://github.com/Eldhus/rocstache"
 authors = ["y2k <y2k@y2kbugger.com>"]
 
 [grammars.rocstache]
-# The grammar is this repository's root, loaded from the local checkout at
-# `rev`, a commit holding it (README, Working on it).
+# The grammar is this repository's root, at `rev`, a pushed commit holding
+# it (README, Working on it).
 repository = "https://github.com/Eldhus/rocstache"
 rev = "19608fbda5aeb5d98c5bb72e93c8b02f26693606"
 

@@ -10,7 +10,7 @@ authors = ["y2k <y2k@y2kbugger.com>"]
 # The grammar is this repository's root, at `rev`, a pushed commit holding
 # it.
 repository = "https://github.com/Eldhus/rocstache"
-rev = "19608fbda5aeb5d98c5bb72e93c8b02f26693606"
+rev = "fe1ecc80700b3305a5e66c1938bcc9d2877742f1"
 
 # What `roux build` would report in a template, as it is typed: `roux lsp`.
 [language_servers.roux]

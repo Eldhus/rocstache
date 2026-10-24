@@ -25,8 +25,9 @@ tree-sitter generate --js-runtime native --abi 14   # src/, committed
 tree-sitter test
 ```
 
-The tree-sitter CLI is one binary from its GitHub release, 0.27.0; no npm. Zed builds the grammar
-from `zed/extension.toml`'s `repository` at `rev`, a pushed commit.
+The tree-sitter CLI is one binary from its GitHub release, 0.27.1 (`tree-sitter-linux-x64.gz`,
+sha256 `d01042f94ba3d6827ddc9788e235f75d8366431be42bdf90ade534d960c98b7d`); no npm. Zed builds the
+grammar from `zed/extension.toml`'s `repository` at `rev`, a pushed commit.
 
 
 ## License

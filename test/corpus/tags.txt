@@ -1,85 +1,98 @@
 ==================
-values through formatters
+holes: paths and Roc expressions
 ==================
-<h1>{{ title | upper }}</h1><p>{{ dishes | len | plural "dish" "dishes" }} {{ user.firstName }} {{ _x }}</p>
+<h1>{{ title }}</h1><p>{{ Fmt.plural(dishes.len(), "dish", "dishes") }} {{ user.first_name }}</p>
 ---
 (template
   (content)
-  (tag
-    (expression
-      (path (identifier))
-      (formatter (formatter_name))))
+  (tag (roc_expression))
   (content)
-  (tag
-    (expression
-      (path (identifier))
-      (formatter (formatter_name))
-      (formatter (formatter_name) (string) (string))))
-  (tag (expression (path (identifier) (identifier))))
-  (tag (expression (path (identifier))))
+  (tag (roc_expression))
+  (tag (roc_expression))
   (content))
 
 ==================
-sections, partials, comments, raw
+sections name their element; partials, comments, raw
 ==================
 {{! a comment }}
-{{# items }}<li>{{ name }}</li>{{/ items }}
-{{^ items }}none{{/ items }}
+{{# dishes |dish| }}<li>{{ dish.name }}</li>{{/ dishes }}
+{{^ dishes }}none{{/ dishes }}
 {{> Nav }}
-{{> Top frame }}
-{{{ html }}} {{ . }}
+{{{ dish.html }}}
 ---
 (template
   (comment (comment_open) (comment_text))
-  (section_open (section_open_delim) (path (identifier)))
+  (section_open (section_open_delim) (path (identifier)) (binder (identifier)))
   (content)
-  (tag (expression (path (identifier))))
+  (tag (roc_expression))
   (content)
   (section_close (section_close_delim) (path (identifier)))
   (inverted_open (inverted_open_delim) (path (identifier)))
   (content)
   (section_close (section_close_delim) (path (identifier)))
-  (partial (partial_delim) (partial_name))
-  (partial (partial_delim) (partial_name) (path (identifier)))
-  (raw_tag (expression (path (identifier))))
-  (tag (expression (path (this)))))
+  (partial (partial_delim) (type_name))
+  (raw_tag (roc_expression)))
+
+==================
+a nested section over its element's field
+==================
+{{#rows |row|}}{{#row.cells |cell|}}{{ cell }}{{/row.cells}}{{/rows}}
+---
+(template
+  (section_open (section_open_delim) (path (identifier)) (binder (identifier)))
+  (section_open (section_open_delim) (path (identifier) (identifier)) (binder (identifier)))
+  (tag (roc_expression))
+  (section_close (section_close_delim) (path (identifier) (identifier)))
+  (section_close (section_close_delim) (path (identifier))))
+
+==================
+a section still being typed, its binder not yet written
+==================
+{{#dishes}}x{{/dishes}}
+---
+(template
+  (section_open (section_open_delim) (path (identifier)))
+  (content)
+  (section_close (section_close_delim) (path (identifier))))
+
+==================
+fragments and conditions
+==================
+{{?open}}<ul>{{$Row}}<li>{{ "${dish.name}!" }}</li>{{/Row}}</ul>{{/open}}
+---
+(template
+  (conditional_open (conditional_open_delim) (path (identifier)))
+  (content)
+  (fragment_open (fragment_open_delim) (type_name))
+  (content)
+  (tag (roc_expression))
+  (content)
+  (section_close (section_close_delim) (type_name))
+  (content)
+  (section_close (section_close_delim) (path (identifier))))
 
 ==================
 sigils with inner whitespace and single braces in text
 ==================
-a { b } {{ #x }}{{ /x }}
+a { b } {{ #x |y| }}{{ /x }}
 ---
 (template
   (content)
-  (section_open (section_open_delim) (path (identifier)))
+  (section_open (section_open_delim) (path (identifier)) (binder (identifier)))
   (section_close (section_close_delim) (path (identifier))))
 
 ==================
-conditional sections and parent paths
-==================
-{{?paid}}{{ ../x }} {{ ../../. }}{{/paid}}
----
-(template
-  (conditional_open (conditional_open_delim) (path (identifier)))
-  (tag (expression (path (parent) (identifier))))
-  (tag (expression (path (parent) (parent) (this))))
-  (section_close (section_close_delim) (path (identifier))))
-
-==================
-the leading contract block
+the leading block: imports, then the contract
 ==================
 {{%
-# The page.
+import Fmt
+## The page.
 Ctx : { links : List({ n : I64 }), title : Str }
 %}}
-<p>{{ links | len | plural "a link" "links" }}</p>
+<p>{{ Fmt.count(links.len()) }}</p>
 ---
 (template
   (pragma (roc_code))
   (content)
-  (tag
-    (expression
-      (path (identifier))
-      (formatter (formatter_name))
-      (formatter (formatter_name) (string) (string))))
+  (tag (roc_expression))
   (content))

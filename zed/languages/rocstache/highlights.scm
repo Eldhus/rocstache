@@ -1,8 +1,8 @@
 ; Delimiters and sigils
 [
   "{{" "}}" "{{{" "}}}" "{{%" "%}}"
-  (section_open_delim) (inverted_open_delim) (conditional_open_delim) (section_close_delim)
-  (partial_delim)
+  (section_open_delim) (inverted_open_delim) (conditional_open_delim) (fragment_open_delim)
+  (section_close_delim) (partial_delim)
 ] @punctuation.special
 
 ; Comments
@@ -10,22 +10,13 @@
 (comment_open) @comment
 (comment_text) @comment
 
-; Paths (context fields)
-(path (identifier) @variable)
-(path (identifier) @property . )
-(this) @variable.special
-(parent) @variable.special
+; A section's path: a name in scope, then its fields
+(path . (identifier) @variable)
+(path (identifier) (identifier) @property)
 
-; A section's name is a variable, even its last segment
-(section_open (path (identifier) @variable))
-(inverted_open (path (identifier) @variable))
-(conditional_open (path (identifier) @variable))
-(section_close (path (identifier) @variable))
+; The name a section gives its element, as a lambda's argument
+(binder name: (identifier) @variable.parameter)
+(binder "|" @punctuation.bracket)
 
-; Partials are Roc modules
-(partial_name) @type
-
-; Formatter pipes: `| name "arg"`
-"|" @operator
-(formatter_name) @function
-(string) @string
+; Partials are Roc modules; fragments are types nested in their page
+(type_name) @type

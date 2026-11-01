@@ -3,6 +3,7 @@
 ((section_open_delim) @open "}}" @close)
 ((inverted_open_delim) @open "}}" @close)
 ((conditional_open_delim) @open "}}" @close)
+((fragment_open_delim) @open "}}" @close)
 ((section_close_delim) @open "}}" @close)
 ((partial_delim) @open "}}" @close)
 ("{{%" @open "%}}" @close)

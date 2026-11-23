@@ -16,12 +16,3 @@ rev = "795f95a7e6d1d9163fdc0d29d72e60887a16819e"
 [language_servers.roux]
 name = "roux"
 languages = ["Rocstache"]
-
-# HTML completions/hovers for the markup, delegated to the same server the
-# HTML extension uses. It sees the {{ }} tags as text.
-[language_servers.vscode-html-language-server]
-name = "vscode-html-language-server"
-languages = ["Rocstache"]
-
-[language_servers.vscode-html-language-server.language_ids]
-"Rocstache" = "html"

@@ -1,30 +1,17 @@
 //! Zed extension for rocstache templates.
 //!
-//! Two language servers are registered for the "Rocstache" language:
-//!   - `roux lsp`: what `roux build` would report in a template, as it is
-//!     typed, from roux's own parser and contract checker. Found on PATH.
-//!     Zed's own `lsp.roux.binary` setting, when it has a `path`, replaces
-//!     this command entirely, arguments included: it then needs
-//!     `"arguments": ["lsp"]`.
-//!   - `vscode-html-language-server`: HTML support for the markup between
-//!     tags, installed through npm into the extension's work directory at
-//!     HTML_VERSION (Zed's HTML extension would take one on PATH first;
-//!     this one does not, so the version is always the pinned one).
+//! One language server is registered for the "Rocstache" language: `roux lsp`,
+//! what `roux build` would report in a template, as it is typed, from roux's
+//! own parser and contract checker. Found on PATH. Zed's own `lsp.roux.binary`
+//! setting, when it has a `path`, replaces this command entirely, arguments
+//! included: it then needs `"arguments": ["lsp"]`.
 
-use std::{env, fs};
 use zed::settings::LspSettings;
-use zed_extension_api::{self as zed, LanguageServerId, Result, serde_json::json};
+use zed_extension_api::{self as zed, LanguageServerId, Result};
 
 const ROUX_BINARY: &str = "roux";
-const HTML_PACKAGE: &str = "@zed-industries/vscode-langservers-extracted";
-/// Pinned: nothing floats. Updated by hand.
-const HTML_VERSION: &str = "4.10.8";
-const HTML_SERVER_PATH: &str =
-    "node_modules/@zed-industries/vscode-langservers-extracted/bin/vscode-html-language-server";
 
-struct RocstacheExtension {
-    html_server_installed: bool,
-}
+struct RocstacheExtension;
 
 impl RocstacheExtension {
     fn roux_command(worktree: &zed::Worktree) -> Result<zed::Command> {
@@ -36,57 +23,18 @@ impl RocstacheExtension {
         })?;
         Ok(zed::Command { command: path, args: vec!["lsp".into()], env: Default::default() })
     }
-
-    fn html_server_exists() -> bool {
-        fs::metadata(HTML_SERVER_PATH).is_ok_and(|stat| stat.is_file())
-    }
-
-    fn html_command(&mut self, id: &LanguageServerId) -> Result<zed::Command> {
-        if !(self.html_server_installed && Self::html_server_exists()) {
-            zed::set_language_server_installation_status(id, &zed::LanguageServerInstallationStatus::CheckingForUpdate);
-            let version = HTML_VERSION.to_string();
-            if !Self::html_server_exists() || zed::npm_package_installed_version(HTML_PACKAGE)?.as_ref() != Some(&version) {
-                zed::set_language_server_installation_status(id, &zed::LanguageServerInstallationStatus::Downloading);
-                let result = zed::npm_install_package(HTML_PACKAGE, &version);
-                if !Self::html_server_exists() {
-                    result?;
-                    return Err(format!("installed {HTML_PACKAGE} but {HTML_SERVER_PATH} is missing"));
-                }
-            }
-            self.html_server_installed = true;
-        }
-        let server_path = env::current_dir().unwrap().join(HTML_SERVER_PATH).to_string_lossy().to_string();
-        Ok(zed::Command {
-            command: zed::node_binary_path()?,
-            args: vec![server_path, "--stdio".into()],
-            env: Default::default(),
-        })
-    }
 }
 
 impl zed::Extension for RocstacheExtension {
     fn new() -> Self {
-        Self { html_server_installed: false }
+        Self
     }
 
     fn language_server_command(&mut self, id: &LanguageServerId, worktree: &zed::Worktree) -> Result<zed::Command> {
         match id.as_ref() {
             "roux" => Self::roux_command(worktree),
-            "vscode-html-language-server" => self.html_command(id),
             other => Err(format!("unknown language server {other}")),
         }
-    }
-
-    fn language_server_initialization_options(
-        &mut self,
-        id: &LanguageServerId,
-        _worktree: &zed::Worktree,
-    ) -> Result<Option<zed::serde_json::Value>> {
-        Ok(match id.as_ref() {
-            // The HTML server's formatter would mangle the template tags.
-            "vscode-html-language-server" => Some(json!({ "provideFormatter": false })),
-            _ => None,
-        })
     }
 
     fn language_server_workspace_configuration(

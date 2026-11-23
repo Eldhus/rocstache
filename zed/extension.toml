@@ -1,6 +1,6 @@
 id = "rocstache"
 name = "Rocstache"
-version = "0.1.0"
+version = "0.2.0"
 schema_version = 1
 description = "rocstache templates: HTML with typed Mustache tags, for Roc apps on roux"
 repository = "https://github.com/Eldhus/rocstache"

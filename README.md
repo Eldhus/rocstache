@@ -3,8 +3,9 @@
 Editor support for rocstache (Roc and mustache), the template language of
 [roux](https://github.com/Eldhus/roux): HTML with mustache tags, each template's contract a Roc type.
 A tree-sitter grammar that follows roux's parser, and a Zed extension: highlighting, with HTML and
-Roc injected, and `roux lsp` for diagnostics, hover and completion. roux defines and compiles the
-language; this repository only reads it.
+Roc injected, and `roux lsp` for diagnostics, hover and completion, the tags' and the HTML's both
+(HTML checked in the pages that render a template, by SuperHTML's rules). roux defines and compiles
+the language; this repository only reads it.
 
 
 ## Use it
